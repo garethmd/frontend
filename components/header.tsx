@@ -1,6 +1,7 @@
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ShieldCheck } from "lucide-react"
+import Link from "next/link"
+import LogoutButton from "./logout-button"
 
 export function Header() {
   return (
@@ -24,6 +25,7 @@ export function Header() {
         <Button variant="outline" className="hidden md:inline-flex">
           Contact Us
         </Button>
+        <LogoutButton />
       </div>
     </header>
   )
