@@ -5,21 +5,14 @@ import { useRouter } from "next/navigation"
 export default function LogoutButton() {
   const router = useRouter()
 
-  const handleLogout = async () => {
-    try {
-      // Call the API to clear cookies
-      const response = await fetch("/api/logout", {
-        method: "POST",
-      })
+  const handleLogout = () => {
+    // Clear the cookies
+    document.cookie = "user_submitted=; path=/; max-age=0"
+    document.cookie = "user_info=; path=/; max-age=0"
 
-      if (response.ok) {
-        // Refresh the page and redirect to home
-        router.refresh()
-        router.push("/")
-      }
-    } catch (error) {
-      console.error("Logout error:", error)
-    }
+    // Redirect to the landing page
+    router.push("/")
+    router.refresh()
   }
 
   return (

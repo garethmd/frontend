@@ -2,6 +2,7 @@
 
 import type React from "react"
 
+import { submitUserContact } from "@/lib/api"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
@@ -10,38 +11,35 @@ export default function LandingForm() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('submitting')
     e.preventDefault()
+    setError("")
     setIsSubmitting(true)
 
     // Simple validation
     if (!name || !email) {
-      alert("Please fill in all fields")
+      setError("Please fill in all fields")
       setIsSubmitting(false)
       return
     }
 
     try {
-      // Submit the form data
-      const response = await fetch("/api/submit-user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email }),
-      })
+      // Submit the form data to your backend
+      await submitUserContact({ name, email })
 
-      if (response.ok) {
-        // Redirect to the main app
-        router.push("/query") // Change this to your main app page
-        router.refresh()
-      } else {
-        alert("Something went wrong. Please try again.")
-      }
+      // Set a cookie to remember that the user submitted the form
+      document.cookie = `user_submitted=true; path=/; max-age=${60 * 60 * 24 * 30}` // 30 days
+      document.cookie = `user_info=${JSON.stringify({ name, email })}; path=/; max-age=${60 * 60 * 24 * 30}` // 30 days
+
+      // Redirect to the main app
+      router.push("/query") // Change this to your main app page
+      router.refresh()
     } catch (error) {
       console.error("Error submitting form:", error)
-      alert("Something went wrong. Please try again.")
+      setError("Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -54,6 +52,8 @@ export default function LandingForm() {
           <h1 className="text-2xl font-bold">Welcome</h1>
           <p className="mt-2 text-gray-600">Please enter your details to continue</p>
         </div>
+
+        {error && <div className="p-3 bg-red-100 text-red-700 rounded-md">{error}</div>}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div>

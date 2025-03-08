@@ -80,3 +80,32 @@ export async function getReport(id: string): Promise<Report | null> {
   }
 }
 
+// Add this interface for user contact details
+export interface UserContact {
+  name: string
+  email: string
+}
+
+// Add this function to submit user contact details
+export async function submitUserContact(data: UserContact): Promise<boolean> {
+  console.log('submitUserContact')
+  try {
+    const response = await fetch(`${API_URL}/contact`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`)
+    }
+
+    return true
+  } catch (error) {
+    console.error("Error submitting user contact:", error)
+    throw error
+  }
+}
+
