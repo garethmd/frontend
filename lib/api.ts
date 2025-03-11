@@ -8,6 +8,7 @@ interface BusinessData {
   aiTypes: string[]
   aiUses: string[]
   additionalInfo: string
+  topic: string
 }
 
 // Update the Report interface to clarify that content might be markdown

@@ -1,18 +1,23 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Card } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
 import { generateReport } from "@/lib/api"
+import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import type React from "react"
+import { useState } from "react"
 
 const regions = [
   { id: "eu", name: "European Union" },
@@ -62,6 +67,7 @@ export function BusinessInfoForm() {
     aiTypes: [] as string[],
     aiUses: [] as string[],
     additionalInfo: "",
+    topic: "AI Legislation", // Added fixed value
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -91,7 +97,7 @@ export function BusinessInfoForm() {
     setLoading(true)
 
     try {
-      // Call the API to generate the report
+      // Call the API to generate the report with the fixed "topic" included
       const reportId = await generateReport(formData)
 
       // Redirect to the report page
@@ -109,7 +115,13 @@ export function BusinessInfoForm() {
       <div className="space-y-4">
         <div>
           <Label htmlFor="companyName">Company Name</Label>
-          <Input id="companyName" name="companyName" value={formData.companyName} onChange={handleChange} required />
+          <Input
+            id="companyName"
+            name="companyName"
+            value={formData.companyName}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div>
@@ -126,7 +138,10 @@ export function BusinessInfoForm() {
 
         <div>
           <Label htmlFor="businessType">Business Type</Label>
-          <Select value={formData.businessType} onValueChange={(value) => handleSelectChange("businessType", value)}>
+          <Select
+            value={formData.businessType}
+            onValueChange={(value) => handleSelectChange("businessType", value)}
+          >
             <SelectTrigger id="businessType">
               <SelectValue placeholder="Select business type" />
             </SelectTrigger>
@@ -148,7 +163,9 @@ export function BusinessInfoForm() {
                 <Checkbox
                   id={`region-${region.id}`}
                   checked={formData.regionsServed.includes(region.id)}
-                  onCheckedChange={(checked) => handleCheckboxChange("regionsServed", region.id, checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    handleCheckboxChange("regionsServed", region.id, checked as boolean)
+                  }
                 />
                 <Label htmlFor={`region-${region.id}`} className="cursor-pointer">
                   {region.name}
@@ -169,7 +186,9 @@ export function BusinessInfoForm() {
                   <Checkbox
                     id={`ai-type-${type.id}`}
                     checked={formData.aiTypes.includes(type.id)}
-                    onCheckedChange={(checked) => handleCheckboxChange("aiTypes", type.id, checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleCheckboxChange("aiTypes", type.id, checked as boolean)
+                    }
                   />
                   <Label htmlFor={`ai-type-${type.id}`} className="cursor-pointer">
                     {type.name}
@@ -187,7 +206,9 @@ export function BusinessInfoForm() {
                   <Checkbox
                     id={`ai-use-${use.id}`}
                     checked={formData.aiUses.includes(use.id)}
-                    onCheckedChange={(checked) => handleCheckboxChange("aiUses", use.id, checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleCheckboxChange("aiUses", use.id, checked as boolean)
+                    }
                   />
                   <Label htmlFor={`ai-use-${use.id}`} className="cursor-pointer">
                     {use.name}
@@ -209,6 +230,12 @@ export function BusinessInfoForm() {
             rows={4}
           />
         </div>
+
+        {/* Fixed topic field (display only) */}
+        <div>
+          <Label htmlFor="topic">Topic</Label>
+          <Input id="topic" name="topic" value={formData.topic} disabled />
+        </div>
       </div>
 
       <Button type="submit" className="w-full" disabled={loading}>
@@ -223,4 +250,3 @@ export function BusinessInfoForm() {
     </form>
   )
 }
-
