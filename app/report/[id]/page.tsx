@@ -1,5 +1,5 @@
 "use client"
-import { Header } from "@/components/header"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useReportPolling } from "@/hooks/use-report-polling"
@@ -9,11 +9,9 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
-
 export default function ReportPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+    <div className="min-h-screen   bg-muted text-foreground">
       <main className="container mx-auto py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <ReportContent />
@@ -23,7 +21,6 @@ export default function ReportPage() {
   )
 }
 
-
 export function ReportContent() {
   const params = useParams()
   const reportId = params.id as string
@@ -31,7 +28,6 @@ export function ReportContent() {
   const { report, isLoading, error } = useReportPolling(reportId)
   const [htmlContent, setHtmlContent] = useState<string | null>(null)
 
-  // Process the markdown/HTML content when the report changes
   useEffect(() => {
     if (report?.content) {
       const html = markdownToHtml(report.content)
@@ -41,13 +37,13 @@ export function ReportContent() {
 
   if (error) {
     return (
-      <Card className="max-w-4xl mx-auto">
+      <Card className="max-w-4xl mx-auto bg-card text-card-foreground shadow-lg bg-gray-50 dark:bg-gray-900">
         <CardHeader>
-          <CardTitle className="text-red-600">Error</CardTitle>
+          <CardTitle className="text-destructive">Error</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>{error}</p>
-          <Button asChild className="mt-4">
+          <p className="text-muted-foreground">{error}</p>
+          <Button asChild variant="destructive" className="mt-4">
             <Link href="/">Return to Home</Link>
           </Button>
         </CardContent>
@@ -57,9 +53,9 @@ export function ReportContent() {
 
   if (isLoading || !report || report.status === "processing") {
     return (
-      <Card className="max-w-4xl mx-auto">
+      <Card className="max-w-4xl mx-auto bg-card text-card-foreground shadow-lg bg-gray-50 dark:bg-gray-900">
         <CardHeader>
-          <CardTitle>Generating Your Report</CardTitle>
+          <CardTitle className="text-primary">Generating Your Report</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
@@ -72,18 +68,18 @@ export function ReportContent() {
   }
 
   return (
-    <Card className="max-w-4xl mx-auto">
+    <Card className="max-w-4xl mx-auto bg-card text-card-foreground shadow-lg bg-gray-50 dark:bg-gray-900">
       <CardHeader>
         <CardTitle>Your Compliance Report</CardTitle>
       </CardHeader>
       <CardContent>
         {htmlContent ? (
           <div
-            className="prose prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:font-semibold prose-strong:text-gray-900 max-w-none"
+            className="prose dark:prose-invert max-w-none prose-headings:font-bold prose-headings:text-primary prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:font-semibold"
             dangerouslySetInnerHTML={{ __html: htmlContent }}
           />
         ) : (
-          <p>No content available for this report.</p>
+          <p className="text-muted-foreground">No content available for this report.</p>
         )}
 
         <div className="mt-8 flex justify-between">
@@ -96,4 +92,3 @@ export function ReportContent() {
     </Card>
   )
 }
-

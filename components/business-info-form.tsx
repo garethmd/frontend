@@ -105,127 +105,170 @@ export function BusinessInfoForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="companyName">Company Name</Label>
-          <Input id="companyName" name="companyName" value={formData.companyName} onChange={handleChange} required />
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-8">
+  <div className="border-b border-gray-200 dark:border-gray-700 pb-8">
+    {/* Company Name & Primary Location */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <Label htmlFor="companyName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Company Name
+        </Label>
+        <Input
+          id="companyName"
+          name="companyName"
+          value={formData.companyName}
+          onChange={handleChange}
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:border-primary focus:ring-primary"
+        />
+      </div>
+      <div>
+        <Label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Primary Location
+        </Label>
+        <Input
+          id="location"
+          name="location"
+          value={formData.location}
+          onChange={handleChange}
+          placeholder="Country or region where your company is headquartered"
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:border-primary focus:ring-primary"
+        />
+      </div>
+    </div>
 
-        <div>
-          <Label htmlFor="location">Primary Location</Label>
-          <Input
-            id="location"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            placeholder="Country or region where your company is headquartered"
-            required
-          />
-        </div>
+    {/* Business Type */}
+    <div className="mt-6">
+      <Label htmlFor="businessType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        Business Type
+      </Label>
+      <Select value={formData.businessType} onValueChange={(value) => handleSelectChange("businessType", value)}>
+        <SelectTrigger id="businessType" className="mt-1 w-full">
+          <SelectValue placeholder="Select business type" />
+        </SelectTrigger>
+        <SelectContent>
+          {businessTypes.map((type) => (
+            <SelectItem key={type.id} value={type.id}>
+              {type.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
 
-        <div>
-          <Label htmlFor="businessType">Business Type</Label>
-          <Select value={formData.businessType} onValueChange={(value) => handleSelectChange("businessType", value)}>
-            <SelectTrigger id="businessType">
-              <SelectValue placeholder="Select business type" />
-            </SelectTrigger>
-            <SelectContent>
-              {businessTypes.map((type) => (
-                <SelectItem key={type.id} value={type.id}>
-                  {type.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label className="block mb-2">Regions You Sell To</Label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {regions.map((region) => (
-              <div key={region.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`region-${region.id}`}
-                  checked={formData.regionsServed.includes(region.id)}
-                  onCheckedChange={(checked) => handleCheckboxChange("regionsServed", region.id, checked as boolean)}
-                />
-                <Label htmlFor={`region-${region.id}`} className="cursor-pointer">
-                  {region.name}
-                </Label>
-              </div>
-            ))}
+    {/* Regions You Sell To */}
+    <div className="mt-6">
+      <Label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+        Regions You Sell To
+      </Label>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {regions.map((region) => (
+          <div key={region.id} className="flex items-center space-x-2">
+            <Checkbox
+              id={`region-${region.id}`}
+              className="border border-gray-300 dark:border-white"
+              checked={formData.regionsServed.includes(region.id)}
+              onCheckedChange={(checked) => handleCheckboxChange("regionsServed", region.id, checked as boolean)}
+            />
+            <Label htmlFor={`region-${region.id}`} className="cursor-pointer text-sm text-gray-700 dark:text-gray-300">
+              {region.name}
+            </Label>
           </div>
-        </div>
+        ))}
+      </div>
+    </div>
 
-        <Card className="p-4">
-          <h3 className="font-medium mb-3">AI Usage Information</h3>
-
-          <div className="mb-4">
-            <Label className="block mb-2">Types of AI Used</Label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {aiTypes.map((type) => (
-                <div key={type.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`ai-type-${type.id}`}
-                    checked={formData.aiTypes.includes(type.id)}
-                    onCheckedChange={(checked) => handleCheckboxChange("aiTypes", type.id, checked as boolean)}
-                  />
-                  <Label htmlFor={`ai-type-${type.id}`} className="cursor-pointer">
-                    {type.name}
-                  </Label>
-                </div>
-              ))}
+    {/* AI Usage Information */}
+    <Card className="mt-6 p-4 bg-gray-50 dark:bg-gray-800">
+      <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100 mb-3">AI Usage Information</h3>
+      {/* Types of AI Used */}
+      <div className="mb-4">
+        <Label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+          Types of AI Used
+        </Label>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {aiTypes.map((type) => (
+            <div key={type.id} className="flex items-center space-x-2">
+              <Checkbox
+                id={`ai-type-${type.id}`}
+                checked={formData.aiTypes.includes(type.id)}
+                className="border border-gray-300 dark:border-white"
+                onCheckedChange={(checked) => handleCheckboxChange("aiTypes", type.id, checked as boolean)}
+              />
+              <Label htmlFor={`ai-type-${type.id}`} className="cursor-pointer text-sm text-gray-700 dark:text-gray-300">
+                {type.name}
+              </Label>
             </div>
-          </div>
-
-          <div>
-            <Label className="block mb-2">What You Use AI For</Label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {aiUses.map((use) => (
-                <div key={use.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`ai-use-${use.id}`}
-                    checked={formData.aiUses.includes(use.id)}
-                    onCheckedChange={(checked) => handleCheckboxChange("aiUses", use.id, checked as boolean)}
-                  />
-                  <Label htmlFor={`ai-use-${use.id}`} className="cursor-pointer">
-                    {use.name}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-
-        <div>
-          <Label htmlFor="additionalInfo">Additional Information</Label>
-          <Textarea
-            id="additionalInfo"
-            name="additionalInfo"
-            value={formData.additionalInfo}
-            onChange={handleChange}
-            placeholder="Please provide any additional details about your AI usage that might be relevant for regulatory compliance"
-            rows={4}
-          />
-        </div>
-
-        {/* Fixed topic field (display only) */}
-        <div>
-          <Label htmlFor="topic">Topic</Label>
-          <Input id="topic" name="topic" value={formData.topic} disabled />
+          ))}
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Report...
-          </>
-        ) : (
-          "Generate Compliance Report"
-        )}
-      </Button>
-    </form>
+      {/* What You Use AI For */}
+      <div>
+        <Label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+          What You Use AI For
+        </Label>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {aiUses.map((use) => (
+            <div key={use.id} className="flex items-center space-x-2">
+              <Checkbox
+                id={`ai-use-${use.id}`}
+                checked={formData.aiUses.includes(use.id)}
+                className="border border-gray-300 dark:border-white"
+                onCheckedChange={(checked) => handleCheckboxChange("aiUses", use.id, checked as boolean)}
+              />
+              <Label htmlFor={`ai-use-${use.id}`} className="cursor-pointer text-sm text-gray-700 dark:text-gray-300">
+                {use.name}
+              </Label>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Card>
+
+    {/* Additional Information */}
+    <div className="mt-6">
+      <Label htmlFor="additionalInfo" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        Additional Information
+      </Label>
+      <Textarea
+        id="additionalInfo"
+        name="additionalInfo"
+        value={formData.additionalInfo}
+        onChange={handleChange}
+        placeholder="Please provide any additional details about your AI usage that might be relevant for regulatory compliance"
+        rows={4}
+        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:border-primary focus:ring-primary"
+      />
+    </div>
+
+    {/* Fixed Topic */}
+    <div className="mt-6">
+      <Label htmlFor="topic" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        Topic
+      </Label>
+      <Input
+        id="topic"
+        name="topic"
+        value={formData.topic}
+        disabled
+        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 shadow-sm"
+      />
+    </div>
+  </div>
+
+  {/* Submit Button */}
+  <Button type="submit" variant="outline" className="w-full py3 hidden md:inline-flex" disabled={loading}>
+    {loading ? (
+      <>
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Report...
+      </>
+    ) : (
+      "Generate Compliance Report"
+    )}
+  </Button>
+</form>
+
   )
 }

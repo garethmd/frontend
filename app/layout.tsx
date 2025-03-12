@@ -1,14 +1,16 @@
-import type React from "react"
+import { CompanyFooter } from "@/components/company-footer"
+import { CompanyHeader } from "@/components/company-header"
+import { ThemeProvider } from "@/components/theme-provider"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import type React from "react"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "AI Regulatory Advisor",
-  description: "Get personalized advice about AI legislation impact on your business",
-    generator: 'v0.dev'
+  title: "Neural Aspect",
+  description: "Applying cutting-edge AI research to solve meaningful business problems",
 }
 
 export default function RootLayout({
@@ -17,12 +19,17 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <div className="relative flex min-h-screen flex-col">
+            <CompanyHeader />
+            <main className="flex-1">{children}</main>
+            <CompanyFooter />
+          </div>
+        </ThemeProvider>
+      </body>
     </html>
   )
 }
 
-
-
-import './globals.css'
