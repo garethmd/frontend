@@ -24,7 +24,7 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#354A63",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -57,15 +57,65 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
       typography: {
         DEFAULT: {
           css: {
-            maxWidth: "none",
+            maxWidth: "100%",
+            color: "var(--tw-prose-body)",
+            h1: {
+              marginTop: "1.5em",
+              marginBottom: "0.5em",
+            },
+            h2: {
+              marginTop: "1.25em",
+              marginBottom: "0.5em",
+            },
+            h3: {
+              marginTop: "1em",
+              marginBottom: "0.5em",
+            },
+            p: {
+              marginTop: "0.75em",
+              marginBottom: "0.75em",
+            },
+            ul: {
+              marginTop: "0.5em",
+              marginBottom: "0.5em",
+            },
+            li: {
+              marginTop: "0.25em",
+              marginBottom: "0.25em",
+            },
+            pre: {
+              backgroundColor: "var(--tw-prose-pre-bg)",
+              borderRadius: "0.375rem",
+              padding: "0.75rem 1rem",
+              overflowX: "auto",
+            },
+            code: {
+              backgroundColor: "var(--tw-prose-pre-bg)",
+              borderRadius: "0.25rem",
+              padding: "0.125rem 0.25rem",
+              fontSize: "0.875em",
+            },
           },
         },
       },
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
-}
-
+};

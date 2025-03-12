@@ -5,13 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { generateReport } from "@/lib/api"
 import { Loader2 } from "lucide-react"
@@ -100,12 +94,12 @@ export function BusinessInfoForm() {
       // Call the API to generate the report with the fixed "topic" included
       const reportId = await generateReport(formData)
 
-      // Redirect to the report page
-      router.push(`/report/${reportId}`)
+      // Redirect to the report page immediately
+      // The report page will handle the polling and status updates
+      router.push(`/report/${reportId}?status=processing`)
     } catch (error) {
       console.error("Error generating report:", error)
       alert("There was an error generating your report. Please try again.")
-    } finally {
       setLoading(false)
     }
   }
@@ -115,13 +109,7 @@ export function BusinessInfoForm() {
       <div className="space-y-4">
         <div>
           <Label htmlFor="companyName">Company Name</Label>
-          <Input
-            id="companyName"
-            name="companyName"
-            value={formData.companyName}
-            onChange={handleChange}
-            required
-          />
+          <Input id="companyName" name="companyName" value={formData.companyName} onChange={handleChange} required />
         </div>
 
         <div>
@@ -138,10 +126,7 @@ export function BusinessInfoForm() {
 
         <div>
           <Label htmlFor="businessType">Business Type</Label>
-          <Select
-            value={formData.businessType}
-            onValueChange={(value) => handleSelectChange("businessType", value)}
-          >
+          <Select value={formData.businessType} onValueChange={(value) => handleSelectChange("businessType", value)}>
             <SelectTrigger id="businessType">
               <SelectValue placeholder="Select business type" />
             </SelectTrigger>
@@ -163,9 +148,7 @@ export function BusinessInfoForm() {
                 <Checkbox
                   id={`region-${region.id}`}
                   checked={formData.regionsServed.includes(region.id)}
-                  onCheckedChange={(checked) =>
-                    handleCheckboxChange("regionsServed", region.id, checked as boolean)
-                  }
+                  onCheckedChange={(checked) => handleCheckboxChange("regionsServed", region.id, checked as boolean)}
                 />
                 <Label htmlFor={`region-${region.id}`} className="cursor-pointer">
                   {region.name}
@@ -186,9 +169,7 @@ export function BusinessInfoForm() {
                   <Checkbox
                     id={`ai-type-${type.id}`}
                     checked={formData.aiTypes.includes(type.id)}
-                    onCheckedChange={(checked) =>
-                      handleCheckboxChange("aiTypes", type.id, checked as boolean)
-                    }
+                    onCheckedChange={(checked) => handleCheckboxChange("aiTypes", type.id, checked as boolean)}
                   />
                   <Label htmlFor={`ai-type-${type.id}`} className="cursor-pointer">
                     {type.name}
@@ -206,9 +187,7 @@ export function BusinessInfoForm() {
                   <Checkbox
                     id={`ai-use-${use.id}`}
                     checked={formData.aiUses.includes(use.id)}
-                    onCheckedChange={(checked) =>
-                      handleCheckboxChange("aiUses", use.id, checked as boolean)
-                    }
+                    onCheckedChange={(checked) => handleCheckboxChange("aiUses", use.id, checked as boolean)}
                   />
                   <Label htmlFor={`ai-use-${use.id}`} className="cursor-pointer">
                     {use.name}

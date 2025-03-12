@@ -1,6 +1,6 @@
 // This file handles API communication with the Python FastAPI backend
 
-interface BusinessData {
+export interface BusinessData {
   companyName: string
   location: string
   businessType: string

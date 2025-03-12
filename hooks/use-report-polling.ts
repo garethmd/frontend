@@ -1,11 +1,11 @@
 "use client"
 
-import { type Report, getReport } from "@/lib/api"
+import { getReport, type Report } from "@/lib/api"
 import { useEffect, useState } from "react"
 
 export function useReportPolling(reportId: string) {
   const [report, setReport] = useState<Report | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -14,27 +14,29 @@ export function useReportPolling(reportId: string) {
 
     const fetchReport = async () => {
       try {
-        const data = await getReport(reportId)
+        const reportData = await getReport(reportId)
 
         if (!isMounted) return
 
-        if (data) {
-          setReport(data)
+        if (reportData) {
+          setReport(reportData)
 
-          // If still processing, poll again after 3 seconds
-          if (data.status === "processing") {
-            timeoutId = setTimeout(fetchReport, 3000)
+          // If the report is still processing, continue polling
+          if (reportData.status === "processing") {
+            timeoutId = setTimeout(fetchReport, 2000) // Poll every 2 seconds
           } else {
-            setLoading(false)
+            setIsLoading(false)
           }
         } else {
           setError("Report not found")
-          setLoading(false)
+          setIsLoading(false)
         }
-      } catch (err) {
-        if (!isMounted) return
-        setError(err instanceof Error ? err.message : "Failed to fetch report")
-        setLoading(false)
+      } catch (error) {
+        if (isMounted) {
+          console.error("Error fetching report:", error)
+          setError("Failed to fetch report")
+          setIsLoading(false)
+        }
       }
     }
 
@@ -46,6 +48,6 @@ export function useReportPolling(reportId: string) {
     }
   }, [reportId])
 
-  return { report, loading, error }
+  return { report, isLoading, error }
 }
 

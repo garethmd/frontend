@@ -1,13 +1,14 @@
 "use client"
 import { Header } from "@/components/header"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { getReport } from "@/lib/api"
-import { AlertCircle, Download, Loader2, Printer, Share2 } from "lucide-react"
-import { notFound } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useReportPolling } from "@/hooks/use-report-polling"
+import { markdownToHtml } from "@/lib/markdown"
+import { Loader2 } from "lucide-react"
+import Link from "next/link"
+import { useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
-import { ReportClient } from "./report-client"
 
 export default function ReportPage() {
   return (
@@ -15,111 +16,84 @@ export default function ReportPage() {
       <Header />
       <main className="container mx-auto py-8 px-4">
         <div className="max-w-4xl mx-auto">
-          <ReportClient />
+          <ReportContent />
         </div>
       </main>
     </div>
   )
 }
 
-async function ReportContent({ id }: { id: string }) {
-  const report = await getReport(id)
 
-  if (!report) {
-    notFound()
+export function ReportContent() {
+  const params = useParams()
+  const reportId = params.id as string
+
+  const { report, isLoading, error } = useReportPolling(reportId)
+  const [htmlContent, setHtmlContent] = useState<string | null>(null)
+
+  // Process the markdown/HTML content when the report changes
+  useEffect(() => {
+    if (report?.content) {
+      const html = markdownToHtml(report.content)
+      setHtmlContent(html)
+    }
+  }, [report])
+
+  if (error) {
+    return (
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-red-600">Error</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>{error}</p>
+          <Button asChild className="mt-4">
+            <Link href="/">Return to Home</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (isLoading || !report || report.status === "processing") {
+    return (
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle>Generating Your Report</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+          <p className="text-center text-muted-foreground">
+            Please wait while we generate your compliance report. This may take a minute...
+          </p>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold">AI Regulatory Compliance Report</h1>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" disabled={report.status !== "completed"}>
-            <Printer className="h-4 w-4 mr-2" />
-            Print
+    <Card className="max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle>Your Compliance Report</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {htmlContent ? (
+          <div
+            className="prose prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:font-semibold prose-strong:text-gray-900 max-w-none"
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
+        ) : (
+          <p>No content available for this report.</p>
+        )}
+
+        <div className="mt-8 flex justify-between">
+          <Button asChild variant="outline">
+            <Link href="/">Generate Another Report</Link>
           </Button>
-          <Button variant="outline" size="sm" disabled={report.status !== "completed"}>
-            <Download className="h-4 w-4 mr-2" />
-            Download
-          </Button>
-          <Button variant="outline" size="sm" disabled={report.status !== "completed"}>
-            <Share2 className="h-4 w-4 mr-2" />
-            Share
-          </Button>
+          <Button onClick={() => window.print()}>Print Report</Button>
         </div>
-      </div>
-
-      {report.status === "processing" && (
-        <Card className="p-6 flex flex-col items-center justify-center py-12">
-          <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
-          <h2 className="text-xl font-medium mb-2">Generating Your Report</h2>
-          <p className="text-gray-500 text-center max-w-md">
-            Our AI is analyzing your business information and preparing a comprehensive regulatory compliance report.
-            This may take a few minutes.
-          </p>
-        </Card>
-      )}
-
-      {report.status === "failed" && (
-        <Card className="p-6 flex flex-col items-center justify-center py-12 bg-red-50">
-          <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-          <h2 className="text-xl font-medium mb-2 text-red-700">Report Generation Failed</h2>
-          <p className="text-red-600 text-center max-w-md">
-            We encountered an error while generating your report. Please try again or contact support if the issue
-            persists.
-          </p>
-          <Button variant="outline" className="mt-4" onClick={() => (window.location.href = "/")}>
-            Return to Home
-          </Button>
-        </Card>
-      )}
-
-      {report.status === "completed" && report.content && (
-        <>
-          <Card className="p-6">
-            <div className="prose max-w-none">
-              <div dangerouslySetInnerHTML={{ __html: report.content }} />
-            </div>
-          </Card>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="text-blue-800 font-medium mb-2">Disclaimer</h3>
-            <p className="text-blue-700 text-sm">
-              This report is provided for informational purposes only and does not constitute legal advice. We recommend
-              consulting with a qualified legal professional for specific guidance on regulatory compliance.
-            </p>
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
-
-function ReportSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <Skeleton className="h-8 w-64" />
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-9 w-24" />
-          <Skeleton className="h-9 w-24" />
-          <Skeleton className="h-9 w-24" />
-        </div>
-      </div>
-
-      <Card className="p-6">
-        <div className="space-y-4">
-          <Skeleton className="h-6 w-full" />
-          <Skeleton className="h-6 w-full" />
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-6 w-full" />
-          <Skeleton className="h-6 w-full" />
-          <Skeleton className="h-6 w-2/3" />
-          <Skeleton className="h-32 w-full" />
-        </div>
-      </Card>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 

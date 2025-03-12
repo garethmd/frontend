@@ -18,13 +18,20 @@ export function Header() {
           <Link href="/about" className="text-gray-600 hover:text-primary transition-colors">
             About
           </Link>
-          <Link href="/resources" className="text-gray-600 hover:text-primary transition-colors">
-            Resources
+           <Link href="/contact"  className="text-gray-600 hover:text-primary transition-colors">
+            Contact Us
           </Link>
         </nav>
-        <Button variant="outline" className="hidden md:inline-flex">
-          Contact Us
-        </Button>
+       
+         <a
+          href="https://calendly.com/garethmd/30min"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button variant="outline" className="hidden md:inline-flex">
+            Book a call
+          </Button>
+        </a>
         <LogoutButton />
       </div>
     </header>
