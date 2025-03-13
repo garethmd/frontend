@@ -70,22 +70,3 @@ export const useTheme = () => {
 
   return context
 }
-
-
-// New utility function to get the current theme
-export function getCurrentTheme(): "dark" | "light" {
-  // For server-side rendering, default to light
-  if (typeof window === "undefined") return "light"
-  
-  // Check for theme in localStorage
-  const storedTheme = localStorage.getItem("theme") as Theme | null
-  
-  // If theme is explicitly set
-  if (storedTheme === "dark") return "dark"
-  if (storedTheme === "light") return "light"
-  
-  // If theme is system or not set, check system preference
-  return window.matchMedia("(prefers-color-scheme: dark)").matches 
-    ? "dark" 
-    : "light"
-}

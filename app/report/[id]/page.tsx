@@ -73,14 +73,15 @@ export function ReportContent() {
         <CardTitle>Your Compliance Report</CardTitle>
       </CardHeader>
       <CardContent>
-        {htmlContent ? (
-          <div
-            className="prose dark:prose-invert max-w-none prose-headings:font-bold prose-headings:text-primary prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:font-semibold"
-            dangerouslySetInnerHTML={{ __html: htmlContent }}
-          />
-        ) : (
-          <p className="text-muted-foreground">No content available for this report.</p>
-        )}
+       {htmlContent ? (
+  <div
+    className="prose dark:prose-invert max-w-none prose-headings:font-bold prose-headings:text-primary dark:prose-headings:text-[#f5793b] prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:font-semibold"
+    dangerouslySetInnerHTML={{ __html: htmlContent }}
+  />
+) : (
+  <p className="text-muted-foreground">No content available for this report.</p>
+)}
+
 
         <div className="mt-8 flex justify-between">
           <Button asChild variant="outline">
